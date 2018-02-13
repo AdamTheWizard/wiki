@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Wiki Viewer</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0">
+
+    <!--  JQuery  -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Font Awesome -->
+    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+
+
+    <style>
+        body {
+  margin:0;
+  padding:0;
+  background-color:#333;
+}
+* {
+  font-family:sans-serif;
+}
+#header {
+  color:#eee;
+  font-weight:100;
+  text-align:center;
+  margin:0;
+  margin-top:1em;
+  padding:0;
+}
+#sub-header {
+  font-size:100%;
+  text-align:center;
+  color:#eee;
+  margin:0;
+  padding:0;
+}
+#controls-div {
+  padding-top:3em;
+  padding-bottom:1em;
+  background-color:;
+  text-align:center;
+}
+
+#searchIcon {
+  color:#eee;
+  position:relative;
+  top:4px;
+  right:7px;
+  padding:.2em;
+  padding-left:.5em;
+  background-color:;
+  font-size:122%;
+  border-right:1px solid #eee;
+  border-top:1px solid #eee;
+  border-bottom:1px solid #eee;
+  border-radius:5px;
+  cursor:pointer;
+}
+#input {
+  font-size:150%;
+  border-bottom-left-radius:5px;
+  border-top-left-radius:5px;
+  border:none;
+  background-color:#eee;
+}
+
+#randomLink {
+  color:#eee;
+  text-decoration:none;
+  display:block;
+  margin-bottom:1em;
+}
+
+#results-div {
+  width:100%;
+  text-align:center;
+  margin-left:-20px;
+}
+
+#results-list {
+  list-style:none;
+}
+
+.resultsItem {
+  background-color:#eee;
+  margin:1em 0;
+  border-radius:5px;
+}
+.resultsLink, a {
+  text-decoration:none;
+  color:#09f;
+}
+
+.resultsTitle {
+  color:#333;
+  padding-top:1em;
+  margin-bottom:0;
+}
+
+.resultsDescription {
+  padding:0 1em 0 1em;
+}
+
+@media only screen and (max-width: 768px) {
+  #input {
+    width:70%;
+  }
+}
+    </style>
+
+</head>
+
+<body>
+
+<div id="header-div">
+  <h1 id="header">WV</h1>
+  <h3 id="sub-header">Wiki Viewer</h3>
+<div id="controls-div">
+  <a id="randomLink" href="https://en.wikipedia.org/wiki/Special:Random" target="_blank">Click here for a random article.</a>
+  <input id="input" placeholder="Search..."></input>
+<span id="search-icon"><i id="searchIcon" class="fas fa-search"></i></span>
+</div>
+<div id="results-div">
+  <ul id="results-list"></ul>
+</div>
+
+    
+    <script>
+        
+var btn = document.getElementById("search-icon");
+
+var searchTerm;
+
+$("#input").change(function(){
+  
+  $("#results-list").empty();
+  searchTerm = $("#input").val();
+  var url = 'https://en.wikipedia.org/w/api.php?action=opensearch&callback=?&suggest=true&search=';
+  
+  $.ajax({
+    type:"GET",
+    url: url + searchTerm,
+    contentType: "application/json; charset=utf-8",
+    async:true,
+    dataType:"json",
+    success: function(response, textStatus, jqXHR) {
+      console.log(response);
+      if (response[1].length > 0) {
+        var title = response[1];
+        var description = response[2];
+        var link = response[3];
+        var listLength = 0;
+        
+        for (i = 0; i < response[1].length; i++){
+          $("#results-list").append("<li class='resultsItem'><h3 class='resultsTitle'>" + title[i] + "</h3><br><p class='resultsDescription'>" + description[i] + "</p><br><a class='resultsLink' href='" + link[i] + "'>View More</a></li>");
+          listLength++;
+        } 
+        console.log(listLength);
+      }
+    }
+  }) 
+  
+});
+    </script>
+
+</body>
+
+</html>
